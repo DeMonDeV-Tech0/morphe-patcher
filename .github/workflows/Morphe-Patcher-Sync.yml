@@ -44,7 +44,7 @@ jobs:
 
           git clone --bare "$SOURCE_REPO" morphe-patcher.git
 
-          cd ghidra.git
+          cd morphe-patcher.git
 
           git push --force --tags "$TARGET_REPO"
 
