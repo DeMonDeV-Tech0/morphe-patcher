@@ -1,3 +1,10 @@
+# [2.4.0-dev.6](https://github.com/MorpheApp/morphe-patcher/compare/v2.4.0-dev.5...v2.4.0-dev.6) (2026-11-14)
+
+
+### Bug Fixes
+
+* Rename `addPatchInterfaceMethod` to `addPatchInterface` ([bd6e902](https://github.com/MorpheApp/morphe-patcher/commit/bd6e902c38d65358637b5227cf5696c00b235b67))
+
 # [2.4.0-dev.5](https://github.com/MorpheApp/morphe-patcher/compare/v2.4.0-dev.4...v2.4.0-dev.5) (2026-11-14)
 
 
