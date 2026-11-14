@@ -1,3 +1,10 @@
+# [2.4.0-dev.7](https://github.com/MorpheApp/morphe-patcher/compare/v2.4.0-dev.6...v2.4.0-dev.7) (2026-11-14)
+
+
+### Bug Fixes
+
+* Compress the DEX files unless the app runs them from the APK ([#284](https://github.com/MorpheApp/morphe-patcher/issues/284)) ([d4fa42b](https://github.com/MorpheApp/morphe-patcher/commit/d4fa42bfe5cece23176424621bdf6c502845acd0))
+
 # [2.4.0-dev.6](https://github.com/MorpheApp/morphe-patcher/compare/v2.4.0-dev.5...v2.4.0-dev.6) (2026-11-14)
 
 
