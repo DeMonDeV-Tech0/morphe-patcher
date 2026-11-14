@@ -61,12 +61,12 @@ internal typealias ClassResolver = (type: String) -> ClassDef?
  *                        interface method has the name and no [parameters] are given,
  *                        or if this class already has the method.
  */
-fun MutableClass.addPatchInterfaceMethod(
+fun MutableClass.addPatchInterface(
     interfaceName: String,
     methodName: String,
     smali: String,
     parameters: List<String>? = null,
-): MutableMethod = addPatchInterfaceMethod(::classDefByOrNull, interfaceName, methodName, smali, parameters)
+): MutableMethod = addPatchInterface(::classDefByOrNull, interfaceName, methodName, smali, parameters)
 
 /**
  * Adds an interface to this class if it does not have it already, and adds a method that implements
@@ -92,12 +92,12 @@ fun MutableClass.addPatchInterfaceMethod(
  *                        already has the method, or if [reference] cannot be called from
  *                        the interface method.
  */
-fun MutableClass.addPatchInterfaceMethod(
+fun MutableClass.addPatchInterface(
     interfaceName: String,
     methodName: String,
     reference: MethodReference,
     parameters: List<String>? = null,
-): MutableMethod = addPatchInterfaceMethod(::classDefByOrNull, interfaceName, methodName, reference, parameters)
+): MutableMethod = addPatchInterface(::classDefByOrNull, interfaceName, methodName, reference, parameters)
 
 /**
  * Adds an interface to this class if it does not have it already, and adds a method that implements
@@ -123,14 +123,14 @@ fun MutableClass.addPatchInterfaceMethod(
  *                        already has the method, or if the interface method cannot get or
  *                        set [field].
  */
-fun MutableClass.addPatchInterfaceMethod(
+fun MutableClass.addPatchInterface(
     interfaceName: String,
     methodName: String,
     field: FieldReference,
     parameters: List<String>? = null,
-): MutableMethod = addPatchInterfaceMethod(::classDefByOrNull, interfaceName, methodName, field, parameters)
+): MutableMethod = addPatchInterface(::classDefByOrNull, interfaceName, methodName, field, parameters)
 
-internal fun MutableClass.addPatchInterfaceMethod(
+internal fun MutableClass.addPatchInterface(
     resolver: ClassResolver,
     interfaceName: String,
     methodName: String,
@@ -148,7 +148,7 @@ internal fun MutableClass.addPatchInterfaceMethod(
     )
 }
 
-internal fun MutableClass.addPatchInterfaceMethod(
+internal fun MutableClass.addPatchInterface(
     resolver: ClassResolver,
     interfaceName: String,
     methodName: String,
@@ -236,7 +236,7 @@ internal fun MutableClass.addPatchInterfaceMethod(
     return addImplementation(interfaceType, interfaceMethod, localRegisters, instructions.toString())
 }
 
-internal fun MutableClass.addPatchInterfaceMethod(
+internal fun MutableClass.addPatchInterface(
     resolver: ClassResolver,
     interfaceName: String,
     methodName: String,

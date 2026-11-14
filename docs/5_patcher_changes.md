@@ -5,21 +5,21 @@ attribute of the patch bundle manifest. A warning is logged when an older bundle
 
 ## 2.4.0
 
-### 🔌 Add extension interface methods with `addPatchInterfaceMethod()`
+### 🔌 Add extension interface methods with `addPatchInterface()`
 
-`addPatchInterfaceMethod()` adds an extension interface to an app class, along with a method that implements
+`addPatchInterface()` adds an extension interface to an app class, along with a method that implements
 one of the interface methods. It replaces building the method by hand with `ImmutableMethod`. The parameters
 and the return type come from the interface method, and the number of registers is found from the smali code.
 
 ```kt
 // Call an existing method.
-playerClass.addPatchInterfaceMethod(PLAYER_INTERFACE, "patch_seekTo", SeekToFingerprint.method)
+playerClass.addPatchInterface(PLAYER_INTERFACE, "patch_seekTo", SeekToFingerprint.method)
 
 // Get or set a field.
-playerClass.addPatchInterfaceMethod(PLAYER_INTERFACE, "patch_getController", controllerField)
+playerClass.addPatchInterface(PLAYER_INTERFACE, "patch_getController", controllerField)
 
 // Use smali code.
-playerClass.addPatchInterfaceMethod(
+playerClass.addPatchInterface(
     PLAYER_INTERFACE,
     "patch_getVideoTime",
     """

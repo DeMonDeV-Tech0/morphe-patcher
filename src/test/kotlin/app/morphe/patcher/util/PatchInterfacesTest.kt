@@ -32,7 +32,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-class PatchInterfaceMethodsTest {
+class PatchInterfacesTest {
 
     private companion object {
         const val INTERFACE = "Lapp/morphe/extension/Patch\$Access;"
@@ -150,7 +150,7 @@ class PatchInterfaceMethodsTest {
     fun `smali method takes its signature from the interface`() {
         val target = targetClass()
 
-        val method = target.addPatchInterfaceMethod(
+        val method = target.addPatchInterface(
             resolver(target),
             INTERFACE,
             "patch_seek",
@@ -174,7 +174,7 @@ class PatchInterfaceMethodsTest {
     fun `interface can be a class name`() {
         val target = targetClass()
 
-        target.addPatchInterfaceMethod(
+        target.addPatchInterface(
             resolver(target),
             "app.morphe.extension.Patch\$Access",
             "patch_stop",
@@ -190,7 +190,7 @@ class PatchInterfaceMethodsTest {
         val target = targetClass()
         val childInterface = "Lapp/morphe/extension/Patch${'$'}ChildAccess;"
 
-        val method = target.addPatchInterfaceMethod(resolver(target), childInterface, "patch_stop", "return-void", null)
+        val method = target.addPatchInterface(resolver(target), childInterface, "patch_stop", "return-void", null)
 
         assertEquals("patch_stop", method.name)
         assertEquals(listOf(childInterface), target.interfaces)
@@ -201,8 +201,8 @@ class PatchInterfaceMethodsTest {
         val target = targetClass()
         val resolver = resolver(target)
 
-        target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_stop", "return-void", null)
-        target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_setTime", "return-void", null)
+        target.addPatchInterface(resolver, INTERFACE, "patch_stop", "return-void", null)
+        target.addPatchInterface(resolver, INTERFACE, "patch_setTime", "return-void", null)
 
         assertEquals(listOf(INTERFACE), target.interfaces)
     }
@@ -211,7 +211,7 @@ class PatchInterfaceMethodsTest {
     fun `smali method resolves parameter registers and labels`() {
         val target = targetClass()
 
-        val method = target.addPatchInterfaceMethod(
+        val method = target.addPatchInterface(
             resolver(target),
             INTERFACE,
             "patch_seek",
@@ -236,7 +236,7 @@ class PatchInterfaceMethodsTest {
     fun `smali method without local registers only has parameter registers`() {
         val target = targetClass()
 
-        val method = target.addPatchInterfaceMethod(resolver(target), INTERFACE, "patch_stop", "return-void", null)
+        val method = target.addPatchInterface(resolver(target), INTERFACE, "patch_stop", "return-void", null)
 
         assertEquals(1, method.implementation!!.registerCount)
     }
@@ -266,10 +266,10 @@ class PatchInterfaceMethodsTest {
         val resolver = resolver(target)
 
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_overloaded", "return-void", null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_overloaded", "return-void", null)
         }
 
-        val method = target.addPatchInterfaceMethod(
+        val method = target.addPatchInterface(
             resolver, INTERFACE, "patch_overloaded", "return-void", listOf("Ljava/lang/String;")
         )
         assertEquals(listOf("Ljava/lang/String;"), method.parameterTypes.map { it.toString() })
@@ -281,14 +281,14 @@ class PatchInterfaceMethodsTest {
         val resolver = resolver(target)
 
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, "Lapp/Missing;", "patch_stop", "return-void", null)
+            target.addPatchInterface(resolver, "Lapp/Missing;", "patch_stop", "return-void", null)
         }
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_missing", "return-void", null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_missing", "return-void", null)
         }
         // Not an interface.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, "Lapp/Parent;", "patch_stop", "return-void", null)
+            target.addPatchInterface(resolver, "Lapp/Parent;", "patch_stop", "return-void", null)
         }
         assertTrue(target.interfaces.isEmpty())
     }
@@ -298,9 +298,9 @@ class PatchInterfaceMethodsTest {
         val target = targetClass()
         val resolver = resolver(target)
 
-        target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_stop", "return-void", null)
+        target.addPatchInterface(resolver, INTERFACE, "patch_stop", "return-void", null)
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_stop", "return-void", null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_stop", "return-void", null)
         }
     }
 
@@ -310,7 +310,7 @@ class PatchInterfaceMethodsTest {
         val methodCount = target.methods.size
 
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver(target), INTERFACE, "patch_stop", "not-an-instruction v0", null)
+            target.addPatchInterface(resolver(target), INTERFACE, "patch_stop", "not-an-instruction v0", null)
         }
         assertTrue(target.interfaces.isEmpty())
         assertEquals(methodCount, target.methods.size)
@@ -320,7 +320,7 @@ class PatchInterfaceMethodsTest {
     fun `method of an interface class is not final`() {
         // The methods of the target are not valid for an interface, but only the class flags matter.
         val target = targetClass("public interface abstract")
-        val method = target.addPatchInterfaceMethod(resolver(target), INTERFACE, "patch_stop", "return-void", null)
+        val method = target.addPatchInterface(resolver(target), INTERFACE, "patch_stop", "return-void", null)
 
         assertEquals(AccessFlags.PUBLIC.value, method.accessFlags)
     }
@@ -329,7 +329,7 @@ class PatchInterfaceMethodsTest {
     fun `method reference is called with casts`() {
         val target = targetClass()
 
-        val method = target.addPatchInterfaceMethod(
+        val method = target.addPatchInterface(
             resolver(target),
             INTERFACE,
             "patch_seek",
@@ -353,7 +353,7 @@ class PatchInterfaceMethodsTest {
     fun `private method is called directly`() {
         val target = targetClass()
 
-        val method = target.addPatchInterfaceMethod(
+        val method = target.addPatchInterface(
             resolver(target), INTERFACE, "patch_stop", targetReference("b", listOf(), "V"), null,
         )
 
@@ -364,7 +364,7 @@ class PatchInterfaceMethodsTest {
     fun `inherited framework method is called virtually`() {
         val target = targetClass()
 
-        val method = target.addPatchInterfaceMethod(
+        val method = target.addPatchInterface(
             resolver(target),
             INTERFACE,
             "patch_stop",
@@ -379,7 +379,7 @@ class PatchInterfaceMethodsTest {
     fun `static method with many parameters is called with a range`() {
         val target = targetClass()
 
-        val method = target.addPatchInterfaceMethod(
+        val method = target.addPatchInterface(
             resolver(target),
             INTERFACE,
             "patch_many",
@@ -398,7 +398,7 @@ class PatchInterfaceMethodsTest {
     fun `void interface method ignores the return value`() {
         val target = targetClass()
 
-        val method = target.addPatchInterfaceMethod(
+        val method = target.addPatchInterface(
             resolver(target),
             INTERFACE,
             "patch_setTime",
@@ -416,19 +416,19 @@ class PatchInterfaceMethodsTest {
 
         // Parameter count.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_stop", targetReference("d", listOf("I"), "V"), null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_stop", targetReference("d", listOf("I"), "V"), null)
         }
         // Primitive parameter type.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_setTime", targetReference("d", listOf("I"), "V"), null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_setTime", targetReference("d", listOf("I"), "V"), null)
         }
         // Primitive return type.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_getTime", targetReference("d", listOf(), "I"), null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_getTime", targetReference("d", listOf(), "I"), null)
         }
         // Method of a class that the target does not extend.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(
+            target.addPatchInterface(
                 resolver,
                 INTERFACE,
                 "patch_stop",
@@ -438,7 +438,7 @@ class PatchInterfaceMethodsTest {
         }
         // Constructor.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_stop", targetReference("<init>", listOf(), "V"), null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_stop", targetReference("<init>", listOf(), "V"), null)
         }
         assertTrue(target.interfaces.isEmpty())
     }
@@ -449,11 +449,11 @@ class PatchInterfaceMethodsTest {
         val resolver = resolver(target)
         val field = ImmutableFieldReference("Lapp/Parent;", "time", "J")
 
-        val getter = target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_getTime", field, null)
+        val getter = target.addPatchInterface(resolver, INTERFACE, "patch_getTime", field, null)
         assertEquals(listOf(Opcode.IGET_WIDE, Opcode.RETURN_WIDE), getter.opcodes())
         assertEquals(3, getter.implementation!!.registerCount)
 
-        val setter = target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_setTime", field, null)
+        val setter = target.addPatchInterface(resolver, INTERFACE, "patch_setTime", field, null)
         assertEquals(listOf(Opcode.IPUT_WIDE, Opcode.RETURN_VOID), setter.opcodes())
         val put = setter.instructions[0] as TwoRegisterInstruction
         assertEquals(1, put.registerA)
@@ -465,7 +465,7 @@ class PatchInterfaceMethodsTest {
         val target = targetClass()
         val resolver = resolver(target)
 
-        val cast = target.addPatchInterfaceMethod(
+        val cast = target.addPatchInterface(
             resolver, INTERFACE, "patch_setListener", target.fields.single { it.name == "b" }, null
         )
         assertEquals(listOf(Opcode.CHECK_CAST, Opcode.IPUT_OBJECT, Opcode.RETURN_VOID), cast.opcodes())
@@ -479,7 +479,7 @@ class PatchInterfaceMethodsTest {
     fun `object field of type object needs no cast`() {
         val target = targetClass()
 
-        val setter = target.addPatchInterfaceMethod(
+        val setter = target.addPatchInterface(
             resolver(target), INTERFACE, "patch_setListener", target.fields.single { it.name == "a" }, null
         )
 
@@ -490,7 +490,7 @@ class PatchInterfaceMethodsTest {
     fun `static field of another class has a getter`() {
         val target = targetClass()
 
-        val getter = target.addPatchInterfaceMethod(
+        val getter = target.addPatchInterface(
             resolver(target),
             INTERFACE,
             "patch_getShared",
@@ -509,15 +509,15 @@ class PatchInterfaceMethodsTest {
 
         // Neither a getter nor a setter.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_stop", time, null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_stop", time, null)
         }
         // Primitive type differs from the object type.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(resolver, INTERFACE, "patch_getName", time, null)
+            target.addPatchInterface(resolver, INTERFACE, "patch_getName", time, null)
         }
         // Instance field of a class that the target does not extend.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(
+            target.addPatchInterface(
                 resolver,
                 INTERFACE,
                 "patch_getName",
@@ -527,7 +527,7 @@ class PatchInterfaceMethodsTest {
         }
         // Unknown field.
         assertFailsWith<PatchException> {
-            target.addPatchInterfaceMethod(
+            target.addPatchInterface(
                 resolver, INTERFACE, "patch_getTime", ImmutableFieldReference(TARGET, "missing", "J"), null
             )
         }

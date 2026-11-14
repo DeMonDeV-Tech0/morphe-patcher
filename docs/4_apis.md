@@ -17,7 +17,7 @@ a fingerprint is declared.
 7. 🧮 Find free registers to use in injected code with `findFreeRegister(Int, Int...)` and `getFreeRegisterProvider(Int, Int, Int...)`
 8. 🔬 Get the registers of an instruction with `registersUsed`
 9. ↩️ Override the return value of a method with `returnEarly()` and `returnLate()`
-10. 🔌 Let extension code call obfuscated app code with `addPatchInterfaceMethod()`
+10. 🔌 Let extension code call obfuscated app code with `addPatchInterface()`
 11. 🔁 Change every matching instruction in all methods with `matchAllMethodIndicesForEach()`
 12. 🏷️ Insert code that jumps to existing code with `addInstructionsWithLabels()` and `addInstructionsAtControlFlowLabel()`
 13. 🔤 Find classes by the strings they contain with `classDefByStrings(String)`
@@ -500,7 +500,7 @@ execute {
 - Prefer `returnLate()` if the method has side effects that other code depends on, and `returnEarly()`
   if the original code should not run at all, such as code that loads ads or sends analytics.
 
-#### 🔌 `addPatchInterfaceMethod()`
+#### 🔌 `addPatchInterface()`
 
 Extension code cannot call obfuscated app code directly, because the names differ between app versions.
 Instead the extension declares an interface, and a patch adds that interface to the app class along with
@@ -518,12 +518,12 @@ public interface PlayerInterface {
 ((PlayerInterface) player).patch_seekTo(0);
 ```
 
-`addPatchInterfaceMethod()` adds the interface to the class if the class does not have it already,
+`addPatchInterface()` adds the interface to the class if the class does not have it already,
 and adds one method of the interface. The parameters and the return type come from the interface method,
 so they are not declared again in the patch. The method can be implemented in three ways:
 
 ```kt
-import app.morphe.patcher.util.addPatchInterfaceMethod
+import app.morphe.patcher.util.addPatchInterface
 
 const val PLAYER_INTERFACE = "Lapp/morphe/extension/PlayerInterface;"
 
@@ -531,15 +531,15 @@ execute {
     val playerClass = PlayerFingerprint.classDef
 
     // Call an existing method. The parameters are passed on in the same order.
-    playerClass.addPatchInterfaceMethod(PLAYER_INTERFACE, "patch_getVideoTime", GetVideoTimeFingerprint.method)
-    playerClass.addPatchInterfaceMethod(PLAYER_INTERFACE, "patch_seekTo", SeekToFingerprint.method)
+    playerClass.addPatchInterface(PLAYER_INTERFACE, "patch_getVideoTime", GetVideoTimeFingerprint.method)
+    playerClass.addPatchInterface(PLAYER_INTERFACE, "patch_seekTo", SeekToFingerprint.method)
 
     // Get a field. An interface method with one parameter that returns void sets the field instead.
     val controllerField = playerClass.fields.single { it.type == controllerType }
-    playerClass.addPatchInterfaceMethod(PLAYER_INTERFACE, "patch_getController", controllerField)
+    playerClass.addPatchInterface(PLAYER_INTERFACE, "patch_getController", controllerField)
 
     // Use smali code.
-    playerClass.addPatchInterfaceMethod(
+    playerClass.addPatchInterface(
         PLAYER_INTERFACE,
         "patch_describe",
         """
